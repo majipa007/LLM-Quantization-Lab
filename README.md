@@ -10,16 +10,26 @@ The default configuration reproduces the Qwen3-0.6B Base experiment.
 
 ```text
 .
-├── config.env.example
-├── data/prompts.txt
-├── models/
-│   ├── hf/
-│   └── gguf/
-├── results/
-├── scripts/
-├── hf_model_card_template.md
-└── run_pipeline.sh
+├── config.env.example        # copy to config.env and edit
+├── run_pipeline.sh           # runs stages 01–12 in order
+├── hf_model_card_template.md # rendered into the Hugging Face model card
+├── data/                     # prompts (tracked) + downloaded corpus (ignored)
+│   ├── prompts.txt
+│   └── README.md
+├── models/                   # model files — large, git-ignored (README kept)
+│   ├── gguf/
+│   └── README.md
+├── results/                  # benchmark outputs — git-ignored (README kept)
+│   └── README.md
+└── scripts/                  # the pipeline stages
+    ├── 00_install_dependencies.sh … 13_upload_huggingface.sh
+    ├── lib/common.sh         # shared settings + helpers
+    └── README.md
 ```
+
+Large or generated artifacts (`models/`, `results/`, `data/` downloads,
+`tools/`, `hf_upload/`, `.venv/`, local `*.env`) are git-ignored — see
+`.gitignore`. Each folder keeps a `README.md` explaining its contents.
 
 ## Start
 

@@ -1,0 +1,10 @@
+# Prompts for the sample-generation stage (scripts/09_generate_samples.sh).
+# One prompt per line. Blank lines and lines starting with '#' are ignored.
+# Each prompt is run against every GGUF with a fixed seed for reproducibility.
+
+Explain what model quantization is in two sentences.
+Write a short poem about the sea.
+List three practical uses for a small language model.
+Translate "Good morning, how are you?" into French.
+Summarize the plot of Romeo and Juliet in one paragraph.
+Write a Python function that returns the nth Fibonacci number.
