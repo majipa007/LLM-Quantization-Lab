@@ -81,7 +81,8 @@ VENV_DIR="${VENV_DIR:-$ROOT_DIR/.venv}"                      # Python virtual en
 
 MODEL_DIR="${MODEL_DIR:-$ROOT_DIR/models}"                  # all model files
 HF_MODEL_DIR="${HF_MODEL_DIR:-$MODEL_DIR/hf/$MODEL_NAME}"   # downloaded HF model
-GGUF_DIR="${GGUF_DIR:-$MODEL_DIR/gguf}"                     # converted + quantized GGUFs
+GGUF_DIR="${GGUF_DIR:-$MODEL_DIR/gguf}"                     # holds the BF16 baseline GGUF
+GGUF_QUANT_DIR="${GGUF_QUANT_DIR:-$GGUF_DIR/quantized}"     # holds the quantized GGUFs
 GGUF_BF16="${GGUF_BF16:-$GGUF_DIR/${MODEL_NAME}-BF16.gguf}" # the full-precision GGUF
 
 RESULTS_DIR="${RESULTS_DIR:-$ROOT_DIR/results}"                 # summary CSVs + everything below
@@ -94,7 +95,7 @@ HF_UPLOAD_DIR="${HF_UPLOAD_DIR:-$ROOT_DIR/hf_upload}"          # staging folder 
 
 # Create every directory up front so no script has to worry about it.
 mkdir -p \
-  "$TOOLS_DIR" "$HF_MODEL_DIR" "$GGUF_DIR" \
+  "$TOOLS_DIR" "$HF_MODEL_DIR" "$GGUF_DIR" "$GGUF_QUANT_DIR" \
   "$RAW_SPEED_DIR" "$RAW_PPL_DIR" "$RAW_GEN_DIR" \
   "$METADATA_DIR" "$DATA_DIR" "$HF_UPLOAD_DIR"
 
@@ -161,9 +162,14 @@ quant_from_filename() {
 }
 
 # List every GGUF for this model, NUL-separated and sorted, so callers can loop
-# safely over names that might contain odd characters.
+# safely over names that might contain odd characters. This covers both the
+# BF16 baseline (directly in GGUF_DIR) and every quantized file (in the
+# quantized/ subfolder), so downstream stages benchmark all of them together.
 list_gguf_models() {
-  find "$GGUF_DIR" -maxdepth 1 -type f -name "${MODEL_NAME}-*.gguf" -print0 | sort -z
+  {
+    find "$GGUF_DIR" -maxdepth 1 -type f -name "${MODEL_NAME}-*.gguf" -print0
+    find "$GGUF_QUANT_DIR" -maxdepth 1 -type f -name "${MODEL_NAME}-*.gguf" -print0
+  } | sort -z
 }
 
 # Save the exact command that was run to a file, safely quoted, so every step

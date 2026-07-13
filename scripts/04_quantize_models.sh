@@ -21,9 +21,10 @@ require_file "$GGUF_BF16"     # the baseline we quantize from
 mkdir -p "$RESULTS_DIR/raw/quantization"
 failures=()   # collects any formats that fail
 
-# Build one GGUF per requested quant format.
+# Build one GGUF per requested quant format, into the quantized/ subfolder
+# (the BF16 baseline stays one level up in GGUF_DIR).
 for quant in "${QUANTS[@]}"; do
-  output="$GGUF_DIR/${MODEL_NAME}-${quant}.gguf"
+  output="$GGUF_QUANT_DIR/${MODEL_NAME}-${quant}.gguf"
   log_file="$RESULTS_DIR/raw/quantization/${quant}.log"
   command_file="$RESULTS_DIR/raw/quantization/${quant}.command.txt"
 

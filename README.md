@@ -17,7 +17,7 @@ The default configuration reproduces the Qwen3-0.6B Base experiment.
 │   ├── prompts.txt
 │   └── README.md
 ├── models/                   # model files — large, git-ignored (README kept)
-│   ├── gguf/
+│   ├── gguf/                 # BF16 baseline + quantized/ subfolder
 │   └── README.md
 ├── results/                  # benchmark outputs — git-ignored (README kept)
 │   └── README.md

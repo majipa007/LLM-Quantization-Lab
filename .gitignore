@@ -30,6 +30,9 @@ models/*
 !models/gguf/
 models/gguf/*
 !models/gguf/README.md
+!models/gguf/quantized/
+models/gguf/quantized/*
+!models/gguf/quantized/README.md
 
 # ---------------------------------------------------------------------------
 # Datasets downloaded by the pipeline (scripts/07). Keep prompts + README.

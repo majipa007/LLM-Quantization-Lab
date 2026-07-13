@@ -14,7 +14,7 @@ files produced from it.
 | Path | Contents | Created by |
 | --- | --- | --- |
 | `hf/<MODEL_NAME>/` | The raw model downloaded from Hugging Face (weights, tokenizer, config). | `scripts/02_download_model.sh` |
-| `gguf/` | The converted baseline GGUF and every quantized GGUF — see [`gguf/README.md`](gguf/README.md). | `scripts/03` and `04` |
+| `gguf/` | The BF16 baseline GGUF, plus a `quantized/` subfolder holding every quantized GGUF — see [`gguf/README.md`](gguf/README.md). | `scripts/03` and `04` |
 
 The exact model, revision and output name are set by `MODEL_REPO`,
 `MODEL_REVISION` and `MODEL_NAME` in `config.env`.
