@@ -33,16 +33,21 @@ while IFS= read -r -d '' model; do
     cp --reflink=auto "$model" "$destination"
   fi
 
+  # Add this model to the bullet list rendered into the model card.
   printf -- '- `%s`\n' "$(basename "$model")" >> "$quant_list_file"
 done < <(list_gguf_models)
 
 (( model_count > 0 )) || die "No GGUF files found in $GGUF_DIR"
 
+# Read the recorded source commits if available; otherwise mark them unknown.
 hf_model_commit="unknown"
 llama_cpp_commit="unknown"
 [[ -f "$METADATA_DIR/hf_model_commit.txt" ]] && hf_model_commit="$(cat "$METADATA_DIR/hf_model_commit.txt")"
 [[ -f "$METADATA_DIR/llama_cpp_commit.txt" ]] && llama_cpp_commit="$(cat "$METADATA_DIR/llama_cpp_commit.txt")"
 
+# Render the model card: run an inline Python script that reads the template,
+# replaces each {{PLACEHOLDER}} with the shell values expanded below, and writes
+# hf_upload/README.md. Args passed to Python: template path, output path, quant-list path.
 require_file "$ROOT_DIR/hf_model_card_template.md"
 "${VENV_DIR}/bin/python" - \
   "$ROOT_DIR/hf_model_card_template.md" \
@@ -77,6 +82,7 @@ for old, new in replacements.items():
 Path(output_path).write_text(text, encoding="utf-8")
 PY
 
+# Copy the checksums and result CSVs into the folder if they exist.
 [[ -f "$RESULTS_DIR/SHA256SUMS" ]] && cp "$RESULTS_DIR/SHA256SUMS" "$HF_UPLOAD_DIR/SHA256SUMS"
 [[ -f "$RESULTS_DIR/size_results.csv" ]] && cp "$RESULTS_DIR/size_results.csv" "$HF_UPLOAD_DIR/size_results.csv"
 [[ -f "$RESULTS_DIR/speed_results.csv" ]] && cp "$RESULTS_DIR/speed_results.csv" "$HF_UPLOAD_DIR/speed_results.csv"
