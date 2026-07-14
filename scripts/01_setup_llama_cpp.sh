@@ -49,10 +49,14 @@ if [[ ! -d "$VENV_DIR" ]]; then
 fi
 
 # Install the packages llama.cpp's converter needs, plus the Hugging Face CLI.
+# NOTE: pin huggingface_hub to <1.0. The converter pins transformers==4.57.6,
+# which requires huggingface_hub>=0.34,<1.0; installing hub 1.x breaks the
+# import with "huggingface-hub>=0.34.0,<1.0 is required". The <1.0 line still
+# provides the `hf` CLI and the hf_xet fast-download backend.
 log "Installing llama.cpp conversion requirements and Hugging Face CLI"
 "$VENV_DIR/bin/python" -m pip install --upgrade pip wheel
 "$VENV_DIR/bin/python" -m pip install -r "$LLAMA_CPP_DIR/requirements.txt"
-"$VENV_DIR/bin/python" -m pip install --upgrade "huggingface_hub[hf_xet]"
+"$VENV_DIR/bin/python" -m pip install --upgrade "huggingface_hub[hf_xet]<1.0"
 
 # Base CMake flags: a native, optimized Release build using Ninja.
 CMAKE_ARGS=(
