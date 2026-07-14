@@ -34,21 +34,7 @@ require_file "$WIKITEXT_FILE"
 summary_csv="$RESULTS_DIR/perplexity_results.csv"
 CSV_HEADER='format,ppl,uncertainty,context,chunks,threads,gpu_layers,status'
 
-# Ask a yes/no question on the terminal and return 0 for yes, 1 for no.
-#   $1 = prompt text, $2 = default answer ("Y" or "N") used on empty input.
-# Reads from /dev/tty (not stdin) because the main loop's stdin is the piped
-# model list. If there is no terminal (e.g. run non-interactively), fall back
-# to the default so the pipeline can still run unattended.
-ask_yes_no() {
-  local prompt="$1" default="$2" reply
-  if [[ ! -r /dev/tty ]]; then
-    [[ "${default^^}" == "Y" ]]
-    return
-  fi
-  read -r -p "$prompt " reply < /dev/tty || reply=""
-  reply="${reply:-$default}"
-  [[ "$reply" =~ ^[Yy] ]]
-}
+# ask_yes_no (prompt-per-model, /dev/tty, unattended fallback) comes from lib/common.sh.
 
 # Rebuild the summary CSV from every saved per-model result, in GGUF order.
 # Called after each model so the summary always reflects what has been done.

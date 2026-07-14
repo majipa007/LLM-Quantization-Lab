@@ -180,3 +180,20 @@ write_command_log() {
   printf '%q ' "$@" > "$output_file"
   printf '\n' >> "$output_file"
 }
+
+# Ask a yes/no question on the terminal; return 0 for yes, 1 for no.
+#   $1 = prompt text, $2 = default answer ("Y" or "N") used on empty input.
+# Reads from /dev/tty (not stdin) because callers often drive a loop from a
+# piped list on stdin. When no terminal is attached (an unattended pipeline
+# run), it returns the default without blocking. Used by the slow, resumable
+# benchmarking stages (06, 08, 09).
+ask_yes_no() {
+  local prompt="$1" default="$2" reply
+  if [[ ! -r /dev/tty ]]; then
+    [[ "${default^^}" == "Y" ]]
+    return
+  fi
+  read -r -p "$prompt " reply < /dev/tty || reply=""
+  reply="${reply:-$default}"
+  [[ "$reply" =~ ^[Yy] ]]
+}
